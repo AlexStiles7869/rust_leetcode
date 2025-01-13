@@ -1,6 +1,39 @@
 <script setup lang="ts">
-import { computed, ComputedRef, ref, Ref } from 'vue'
+import { onMounted, computed, ComputedRef, ref, Ref } from 'vue'
 import IslandTiles from './components/IslandTiles.vue'
+
+import { gsap } from 'gsap'
+import { ExpoScaleEase } from 'gsap/EasePack'
+
+gsap.registerPlugin(ExpoScaleEase)
+
+onMounted(() => {
+  const timeline = gsap.timeline()
+  timeline
+    .to('.loader', {
+      delay: 0.5,
+      height: '0%',
+      duration: 1,
+      ease: 'expo.out',
+    })
+    .to(
+      '.landing-text h1',
+      {
+        opacity: 1,
+        filter: 'blur(0px)',
+        duration: 0.65,
+        y: '0%',
+        transformOrigin: 'center center',
+        rotationX: 0,
+        rotationZ: 0,
+        ease: 'power4.out',
+        stagger: {
+          each: 0.075,
+        },
+      },
+      '<20%',
+    )
+})
 
 const copyState: Ref<string> = ref('')
 const copyButtonText: ComputedRef<string> = computed(() => {
@@ -44,36 +77,44 @@ const copyIslandToClipboard = () => {
 
 <template>
   <!-- Navigation bar -->
-  <div class="landing-bar">
-    <div class="landing-text">
-      <h1>Islands</h1>
-      <p>A simple demo of Vue and Rust WebAssembly.</p>
+  <div class="loader"></div>
+  <nav>
+    <div class="logo">
+      <span>AJ</span>
     </div>
-    <div class="copy-button-container">
-      <button @click="copyIslandToClipboard" :class="[copyState]">
-        <!-- Copy Icon -->
-        <span class="material-symbols-outlined"> content_copy </span>
-        <span>{{ copyButtonText }}</span>
-      </button>
+  </nav>
+  <div class="app-container">
+    <div class="landing-bar">
+      <div class="landing-text">
+        <h1>Islands</h1>
+        <p>A simple demo of Vue and Rust WebAssembly.</p>
+      </div>
+      <div class="copy-button-container">
+        <button @click="copyIslandToClipboard" :class="[copyState]">
+          <!-- Copy Icon -->
+          <span class="material-symbols-outlined"> content_copy </span>
+          <span>{{ copyButtonText }}</span>
+        </button>
+      </div>
     </div>
-  </div>
-  <IslandTiles></IslandTiles>
-  <div class="world-info">
-    <h2>World Stats</h2>
-    <div class="world-stats">
-      <div class="world-stat">
-        <h3>Number of Islands</h3>
-        <span class="main">0</span>
-      </div>
-      <div class="world-stat">
-        <h3>Size of Largest Island</h3>
-        <span
-          ><span class="main">0</span><span class="sec"> Units<sup>2</sup></span></span
-        >
-      </div>
-      <div class="world-stat">
-        <h3>Number of Tiles</h3>
-        <span><span class="main">0</span><span class="sec"> of 20 spots</span></span>
+    <IslandTiles></IslandTiles>
+    <div class="world-info">
+      <h2>World Stats</h2>
+      <div class="world-stats">
+        <div class="world-stat">
+          <h3>Number of Islands</h3>
+          <span class="main">0</span>
+        </div>
+        <div class="world-stat">
+          <h3>Size of Largest Island</h3>
+          <span
+            ><span class="main">0</span><span class="sec"> Units<sup>2</sup></span></span
+          >
+        </div>
+        <div class="world-stat">
+          <h3>Number of Tiles</h3>
+          <span><span class="main">0</span><span class="sec"> of 20 spots</span></span>
+        </div>
       </div>
     </div>
   </div>
@@ -82,6 +123,47 @@ const copyIslandToClipboard = () => {
 </template>
 
 <style scoped>
+.loader {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  background-color: black;
+  bottom: 0;
+  z-index: 9999;
+}
+nav {
+  margin: 2rem;
+
+  .logo {
+    padding: 0.75rem;
+    display: inline-block;
+    background-color: black;
+    width: 4.5rem;
+    height: 4.5rem;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 0.125rem;
+    user-select: none;
+
+    span {
+      font-size: 2rem;
+      color: white;
+      font-weight: 700;
+    }
+  }
+}
+.app-container {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  margin: 0 auto;
+  width: fit-content;
+
+  > * {
+    width: 100%;
+  }
+}
 .landing-bar {
   display: flex;
   gap: 2rem;
@@ -90,7 +172,12 @@ const copyIslandToClipboard = () => {
   margin-bottom: 1.5rem;
 
   .landing-text {
+    overflow: hidden;
+    perspective: 14px;
     h1 {
+      transform: translateY(-100%) rotateZ(-14deg) rotateX(1deg);
+      opacity: 0;
+      filter: blur(20px);
       font-size: 3rem;
       letter-spacing: -0.125rem;
       font-weight: 600;
@@ -117,6 +204,21 @@ const copyIslandToClipboard = () => {
       transition:
         transform 200ms,
         background-color 200ms;
+      overflow: hidden;
+      position: relative;
+
+      > * {
+        z-index: 2;
+      }
+
+      &::after {
+        display: block;
+        position: absolute;
+        height: 100%;
+        width: 100%;
+        z-index: 1;
+        background-color: green;
+      }
 
       &.copied {
         background-color: green;
