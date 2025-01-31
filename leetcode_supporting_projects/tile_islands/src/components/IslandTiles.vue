@@ -73,8 +73,8 @@ const changeTile = (evt: MouseEvent) => {
         transition: transform 200ms;
 
         &.grass {
-          transform: scale(8);
-          background-image: url('@/assets/grass_2.png');
+          /* transform: scale(8); */
+          background-image: url('@/assets/grass_3.png');
         }
       }
 
