@@ -1,4 +1,15 @@
+from enum import Enum
+
+class Direction(Enum):
+    LEFT = (-1, 0)
+    RIGHT = (1, 0)
+    UP = (0, 1)
+    DOWN = (0, -1)
+
 class TileSet:
+    # Preferences for where existing tiles should be offset to accomodate new tiles
+    DIRECTION_PREFS = [Direction.LEFT, Direction.RIGHT, Direction.UP, Direction.DOWN]
+
     def __init__(self, tiles):
         self.tiles = tiles 
 
@@ -16,7 +27,8 @@ class TileSet:
         if self.tiles[location[0]][location[1]] == '1':
             print("Moving existing tiles to fit new tile")
             # Tiles need to be rearranged to allow for new tile to fit in
-
+            # Go through direction preference list to try and find direction for existing tile to be moved to. If not possible, choose first preference and attempt same rules for newly selected main tile
+            # Cheapest (solution for least tiles moved) could be discovered using BFS
 
         else:
             self.tiles[location[0]][location[1]] = tile
